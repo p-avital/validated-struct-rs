@@ -1,4 +1,5 @@
 use std::{any::Any, collections::HashMap};
+pub use validated_struct_macros::*;
 #[derive(Default)]
 pub struct Validator {
     root: Vec<Box<dyn Fn(&dyn Any) -> bool>>,
