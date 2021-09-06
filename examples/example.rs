@@ -5,12 +5,17 @@ fn hi_validator(new: &Hi) -> bool {
     new.c().len() == *new.d()
 }
 validated_struct::validator! {
+    /// Struct documentation works as expected, just make sure they're in the right spot
     #[recursive_attrs] // attributes bellow are added to each substructure, such as Hi
+    /// Documentation is an attribute, so it WILL be passed around by #[recursive_attrs]
     #[repr(C)]
     #[derive(Clone, Debug, serde::Deserialize)]
     Hello {
+        /// field documentation is given to both the getter an setter for said field
         a: String where (string_validator),
-        b: Hi {
+        /// `b` is valid iff `d == c.len()`
+        b:
+        Hi {
             c: Vec<f64>,
             d: usize
         } where (hi_validator)
