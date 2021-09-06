@@ -4,7 +4,7 @@ fn string_validator(new: &str) -> bool {
 fn hi_validator(new: &Hi) -> bool {
     new.c().len() == *new.d()
 }
-validated_struct_macros::validator! {
+validated_struct::validator! {
     #[recursive_attrs] // attributes bellow are added to each substructure, such as Hi
     #[repr(C)]
     #[derive(Clone, Debug, serde::Deserialize)]

@@ -88,11 +88,10 @@ impl From<String> for InsertionError {
     }
 }
 pub trait ValidatedMap {
-    #[allow(unused_variables)]
     fn insert_sync<'d, D: serde::Deserializer<'d>>(
         &mut self,
-        key: &str,
-        value: D,
+        _key: &str,
+        _value: D,
     ) -> Result<(), InsertionError>
     where
         InsertionError: From<D::Error>,
