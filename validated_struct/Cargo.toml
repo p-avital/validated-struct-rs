@@ -1,0 +1,19 @@
+[package]
+name = "validated_struct"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+validated_struct_macros = { path = "../validated_struct_macros", features = [
+	"serde",
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", optional = true }
+flume = "0.10"
+
+[dev-dependencies]
+json5 = "0.3"
+serde_json = "1.0"
