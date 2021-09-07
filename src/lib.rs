@@ -61,6 +61,12 @@ pub enum InsertionError {
     Str(&'static str),
     String(String),
 }
+impl std::error::Error for InsertionError {}
+impl std::fmt::Display for InsertionError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
 impl InsertionError {
     pub fn sync_insert_not_available() -> Self {
         InsertionError::SyncInsertNotAvailable
@@ -76,6 +82,12 @@ impl From<serde_json::Error> for InsertionError {
 pub enum GetError {
     NoMatchingKey,
     TypeMissMatch,
+}
+impl std::error::Error for GetError {}
+impl std::fmt::Display for GetError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 impl From<&'static str> for InsertionError {
     fn from(s: &'static str) -> Self {
