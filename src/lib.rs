@@ -1,4 +1,4 @@
-use std::{any::Any, collections::HashMap};
+use std::{any::Any, borrow::Cow, collections::HashMap};
 pub use validated_struct_macros::*;
 #[derive(Default)]
 pub struct Validator {
@@ -118,4 +118,6 @@ pub trait ValidatedMap {
     where
         InsertionError: From<D::Error>;
     fn get<'a>(&'a self, key: &str) -> Result<&'a dyn Any, GetError>;
+    type Keys: IntoIterator<Item = String>;
+    fn keys(&self) -> Self::Keys;
 }
