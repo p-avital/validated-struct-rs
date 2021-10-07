@@ -77,3 +77,7 @@ pub trait ValidatedMap {
     type Keys: IntoIterator<Item = String>;
     fn keys(&self) -> Self::Keys;
 }
+pub fn split_once(s: &str, pattern: char) -> (&str, &str) {
+    let index = s.find(pattern).unwrap_or_else(|| s.len());
+    s.split_at(index)
+}
