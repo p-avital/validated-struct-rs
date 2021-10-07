@@ -37,8 +37,9 @@ fn main() {
     hello
         .insert("b", &mut from_str(r#"{"c": [0.2, 0.1], "d":2}"#))
         .unwrap();
+    hello.insert("b/c", &mut from_str("[0.1, 0.3]")).unwrap();
 }
 #[cfg(not(feature = "serde_json"))]
 fn main() {
-    panic!("You must build this example with --feature=serde_json for it to work")
+    panic!("You must build this example with --features=serde_json for it to work")
 }
