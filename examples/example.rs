@@ -18,7 +18,39 @@ validated_struct::validator! {
         Hi {
             c: Vec<f64>,
             d: usize
-        } where (hi_validator)
+        } where (hi_validator),
+        #[validated(recursive_accessors)]
+        e: StringMap,
+    }
+}
+
+#[derive(Clone, Debug, serde::Deserialize)]
+pub struct StringMap(std::collections::HashMap<String, String>);
+impl validated_struct::ValidatedMap for StringMap {
+    fn insert<'d, D: serde::Deserializer<'d>>(
+        &mut self,
+        key: &str,
+        value: D,
+    ) -> Result<(), validated_struct::InsertionError>
+    where
+        validated_struct::InsertionError: From<D::Error>,
+    {
+        self.0
+            .insert(key.into(), serde::Deserialize::deserialize(value)?);
+        Ok(())
+    }
+
+    fn get<'a>(&'a self, key: &str) -> Result<&'a dyn std::any::Any, validated_struct::GetError> {
+        self.0
+            .get(key)
+            .map(|f| f as &dyn std::any::Any)
+            .ok_or(validated_struct::GetError::NoMatchingKey)
+    }
+
+    type Keys = Vec<String>;
+
+    fn keys(&self) -> Self::Keys {
+        self.0.keys().cloned().collect()
     }
 }
 
