@@ -19,12 +19,13 @@ validated_struct::validator! {
             c: Vec<f64>,
             d: usize
         } where (hi_validator),
+        #[serde(default)]
         #[validated(recursive_accessors)]
         e: StringMap,
     }
 }
 
-#[derive(Clone, Debug, serde::Deserialize)]
+#[derive(Clone, Default, Debug, serde::Deserialize)]
 pub struct StringMap(std::collections::HashMap<String, String>);
 impl validated_struct::ValidatedMap for StringMap {
     fn insert<'d, D: serde::Deserializer<'d>>(
@@ -70,6 +71,8 @@ fn main() {
         .insert("b", &mut from_str(r#"{"c": [0.2, 0.1], "d":2}"#))
         .unwrap();
     hello.insert("b/c", &mut from_str("[0.1, 0.3]")).unwrap();
+    hello.insert("e/c", &mut from_str("\"hello\"")).unwrap();
+    println!("{:?}", &hello);
 }
 #[cfg(not(feature = "serde_json"))]
 fn main() {
