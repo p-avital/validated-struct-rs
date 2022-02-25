@@ -9,7 +9,7 @@ validated_struct::validator! {
     #[recursive_attrs] // attributes bellow are added to each substructure, such as Hi
     /// Documentation is an attribute, so it WILL be passed around by #[recursive_attrs]
     #[repr(C)]
-    #[derive(Clone, Debug, serde::Deserialize)]
+    #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
     Hello {
         /// field documentation is given to both the getter an setter for said field
         a: String where (string_validator),
@@ -25,7 +25,7 @@ validated_struct::validator! {
     }
 }
 
-#[derive(Clone, Default, Debug, serde::Deserialize)]
+#[derive(Clone, Default, Debug, serde::Deserialize, serde::Serialize)]
 pub struct StringMap(std::collections::HashMap<String, String>);
 impl validated_struct::ValidatedMap for StringMap {
     fn insert<'d, D: serde::Deserializer<'d>>(
@@ -54,6 +54,7 @@ impl validated_struct::ValidatedMap for StringMap {
         self.0.keys().cloned().collect()
     }
 
+    #[cfg(feature = "serde_json")]
     fn get_json(&self, key: &str) -> Result<String, validated_struct::GetError> {
         self.0.get(key).map_or_else(
             || Err(validated_struct::GetError::NoMatchingKey),
@@ -80,6 +81,8 @@ fn main() {
     hello.insert("b/c", &mut from_str("[0.1, 0.3]")).unwrap();
     hello.insert("e/c", &mut from_str("\"hello\"")).unwrap();
     println!("{:?}", &hello);
+    println!("json e/c: {}", hello.get_json("e/c").unwrap());
+    println!("json b/c: {}", hello.get_json("b/c").unwrap());
 }
 #[cfg(not(feature = "serde_json"))]
 fn main() {

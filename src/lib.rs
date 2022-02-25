@@ -38,12 +38,17 @@ impl From<json5::Error> for InsertionError {
 pub enum GetError {
     NoMatchingKey,
     TypeMissMatch,
+    #[cfg(feature = "serde_json")]
     Other(Box<dyn std::error::Error>),
 }
 impl std::error::Error for GetError {}
 impl std::fmt::Display for GetError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        match self {
+            GetError::NoMatchingKey | GetError::TypeMissMatch => write!(f, "{:?}", self),
+            #[cfg(feature = "serde_json")]
+            GetError::Other(e) => write!(f, "{}", e),
+        }
     }
 }
 impl From<&'static str> for InsertionError {
@@ -75,6 +80,7 @@ pub trait ValidatedMap {
     where
         InsertionError: From<D::Error>;
     fn get<'a>(&'a self, key: &str) -> Result<&'a dyn Any, GetError>;
+    #[cfg(feature = "serde_json")]
     fn get_json(&self, key: &str) -> Result<String, GetError>;
     type Keys: IntoIterator<Item = String>;
     fn keys(&self) -> Self::Keys;
