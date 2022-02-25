@@ -53,6 +53,13 @@ impl validated_struct::ValidatedMap for StringMap {
     fn keys(&self) -> Self::Keys {
         self.0.keys().cloned().collect()
     }
+
+    fn get_json(&self, key: &str) -> Result<String, validated_struct::GetError> {
+        self.0.get(key).map_or_else(
+            || Err(validated_struct::GetError::NoMatchingKey),
+            |s| serde_json::to_string(s).map_err(|e| validated_struct::GetError::Other(e.into())),
+        )
+    }
 }
 
 #[cfg(feature = "serde_json")]

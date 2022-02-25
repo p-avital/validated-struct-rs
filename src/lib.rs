@@ -34,10 +34,11 @@ impl From<json5::Error> for InsertionError {
         InsertionError::Json5Err(e)
     }
 }
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug)]
 pub enum GetError {
     NoMatchingKey,
     TypeMissMatch,
+    Other(Box<dyn std::error::Error>),
 }
 impl std::error::Error for GetError {}
 impl std::fmt::Display for GetError {
@@ -74,11 +75,12 @@ pub trait ValidatedMap {
     where
         InsertionError: From<D::Error>;
     fn get<'a>(&'a self, key: &str) -> Result<&'a dyn Any, GetError>;
+    fn get_json(&self, key: &str) -> Result<String, GetError>;
     type Keys: IntoIterator<Item = String>;
     fn keys(&self) -> Self::Keys;
 }
 pub fn split_once(s: &str, pattern: char) -> (&str, &str) {
-    let index = s.find(pattern).unwrap_or_else(|| s.len());
+    let index = s.find(pattern).unwrap_or(s.len());
     let (l, r) = s.split_at(index);
     (l, if r.is_empty() { "" } else { &r[1..] })
 }
