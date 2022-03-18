@@ -61,17 +61,10 @@ impl From<String> for InsertionError {
         InsertionError::String(s)
     }
 }
-pub trait ValidatedMap {
-    fn insert_sync<'d, D: serde::Deserializer<'d>>(
-        &self,
-        _key: &str,
-        _value: D,
-    ) -> Result<(), InsertionError>
-    where
-        InsertionError: From<D::Error>,
-    {
-        Err(InsertionError::sync_insert_not_available())
-    }
+pub trait ValidatedMapAssociatedTypes<'a> {
+    type Begotten;
+}
+pub trait ValidatedMap: for<'a> ValidatedMapAssociatedTypes<'a> {
     fn insert<'d, D: serde::Deserializer<'d>>(
         &mut self,
         key: &str,
@@ -79,7 +72,10 @@ pub trait ValidatedMap {
     ) -> Result<(), InsertionError>
     where
         InsertionError: From<D::Error>;
-    fn get<'a>(&'a self, key: &str) -> Result<&'a dyn Any, GetError>;
+    fn get<'a>(
+        &'a self,
+        key: &str,
+    ) -> Result<<Self as ValidatedMapAssociatedTypes<'a>>::Begotten, GetError>;
     #[cfg(feature = "serde_json")]
     fn get_json(&self, key: &str) -> Result<String, GetError>;
     type Keys: IntoIterator<Item = String>;
