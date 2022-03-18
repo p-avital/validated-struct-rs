@@ -27,6 +27,9 @@ validated_struct::validator! {
 
 #[derive(Clone, Default, Debug, serde::Deserialize, serde::Serialize)]
 pub struct StringMap(std::collections::HashMap<String, String>);
+impl<'a> validated_struct::ValidatedMapAssociatedTypes<'a> for StringMap {
+    type Accessor = &'a dyn std::any::Any;
+}
 impl validated_struct::ValidatedMap for StringMap {
     fn insert<'d, D: serde::Deserializer<'d>>(
         &mut self,

@@ -1,4 +1,3 @@
-use std::any::Any;
 pub use validated_struct_macros::*;
 
 #[derive(Debug)]
