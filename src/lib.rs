@@ -63,7 +63,7 @@ impl From<String> for InsertionError {
 }
 pub trait ValidatedMap {
     fn insert_sync<'d, D: serde::Deserializer<'d>>(
-        &mut self,
+        &self,
         _key: &str,
         _value: D,
     ) -> Result<(), InsertionError>
