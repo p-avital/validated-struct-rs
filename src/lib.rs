@@ -62,7 +62,7 @@ impl From<String> for InsertionError {
     }
 }
 pub trait ValidatedMapAssociatedTypes<'a> {
-    type Begotten;
+    type Accessor;
 }
 pub trait ValidatedMap: for<'a> ValidatedMapAssociatedTypes<'a> {
     fn insert<'d, D: serde::Deserializer<'d>>(
@@ -75,9 +75,13 @@ pub trait ValidatedMap: for<'a> ValidatedMapAssociatedTypes<'a> {
     fn get<'a>(
         &'a self,
         key: &str,
-    ) -> Result<<Self as ValidatedMapAssociatedTypes<'a>>::Begotten, GetError>;
+    ) -> Result<<Self as ValidatedMapAssociatedTypes<'a>>::Accessor, GetError>;
     #[cfg(feature = "serde_json")]
     fn get_json(&self, key: &str) -> Result<String, GetError>;
+    #[cfg(feature = "json5")]
+    fn insert_json5(&mut self, key: &str, value: &str) -> Result<(), InsertionError> {
+        self.insert(key, &mut json5::Deserializer::from_str(value)?)
+    }
     type Keys: IntoIterator<Item = String>;
     fn keys(&self) -> Self::Keys;
 }
